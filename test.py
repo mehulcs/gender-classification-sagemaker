@@ -21,6 +21,9 @@ args = ap.parse_args()
 # %%
 image = cv2.imread(args.image)
 face, confidence = cv.detect_face(image)
+print("------------")
+print(face)
+print("------------")
 
 for idx, f in enumerate(face):
 

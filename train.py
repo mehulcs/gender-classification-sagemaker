@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # %%
 import matplotlib
 from keras.preprocessing.image import ImageDataGenerator
