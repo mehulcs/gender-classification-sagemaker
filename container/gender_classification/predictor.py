@@ -1,6 +1,6 @@
+from __future__ import print_function
 import os
 import json
-import StringIO
 import sys
 import signal
 import traceback
@@ -12,7 +12,6 @@ import cvlib
 from flask import jsonify
 
 from keras.preprocessing.image import img_to_array
-from __future__ import print_function
 from keras.models import load_model
 
 WORKING_DIR = '/opt/ml/'
@@ -26,7 +25,7 @@ class InferenceService(object):
     @classmethod
     def get_model(cls):
         if cls.model == None:
-            cls.model = load_model('model.h5')
+            cls.model = load_model(MODEL_FILE_PATH)
         return cls.model
 
     @classmethod
@@ -42,17 +41,15 @@ app = flask.Flask(__name__)
 @app.route('/ping', methods=['GET'])
 def ping():
     health = InferenceService.get_model() is not None
-
     status = 200 if health else 404
-    return flask.Response(response='\n', status=status, mimetype='application/json')
+    return flask.Response(response='', status=status, mimetype='application/json')
 
 
 @app.route('/invocations', methods=['POST'])
 def transformation():
     data = None
-
-    if flask.request.content_type != 'image/jpeg':
-        return flask.Response(response='This predictor only supports JPEG Image', status=415, mimetype='text/plain')
+    # if flask.request.content_type != 'image/jpeg':
+    #     return flask.Response(response='This predictor only supports JPEG Image', status=415, mimetype='text/plain')
 
     # Read image
     file = flask.request.files['image']
@@ -61,6 +58,8 @@ def transformation():
         np.fromstring(fileData, np.uint8),
         cv2.IMREAD_COLOR
     )
+
+    print(image)
 
     # Detect face in image
     faces, confidence = cvlib.detect_face(image)
@@ -76,7 +75,7 @@ def transformation():
     face_crop = img_to_array(face_crop)
     face_crop = np.expand_dims(face_crop, axis=0)
 
-    confidence = InferenceService.predict(faces)[0]
+    confidence = InferenceService.predict(face_crop)[0]
     index = np.argmax(confidence)
 
-    return jsonify({'predictedClass': classes[index], 'confidence': confidence[index]})
+    return jsonify({'predictedClass': classes[index], 'confidence': str(confidence[index])})
