@@ -2,7 +2,7 @@
 
 image=$1
 
-sudo docker run \
+docker run \
     -v $(pwd)/opt_ml/input:/opt/ml/input \
     -v $(pwd)/opt_ml/model:/opt/ml/model \
     -v $(pwd)/opt_ml/output:/opt/ml/output \
