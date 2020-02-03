@@ -61,6 +61,9 @@ images_file_path = [
 random.seed(42)
 random.shuffle(images_file_path)
 
+print("Total training images found : ")
+print(len(images_file_path))
+
 
 # Variables
 epochs = 100
@@ -166,8 +169,8 @@ def parseHyperParameters():
     with open(PARAMETER_FILE_PATH, 'r') as tc:
         hyperParams = json.load(tc)
 
-    epochs = hyperParams.get('epochs', 100)
-    batch_size = hyperParams.get('batch_size', 64)
+    epochs = float(hyperParams.get('epochs', 100))
+    batch_size = int(hyperParams.get('batch_size', 64))
 
 
 if __name__ == '__main__':
